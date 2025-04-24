@@ -11,23 +11,26 @@ router.get('/', function(req, res, next) {
     console.log(req.query);
     if (Object.keys(req.query).length > 0) {
         let output = [ ...keyValueStore.filter((entry) => entry.key === req.query.filter)];
-        res.send(output);
+        console.log(responseBody(output));
+        res.send(responseBody(output));
     } else {
+        console.log(responseBody(keyValueStore));
         res.send(responseBody(keyValueStore));
     }
 });
 
 /* POST new values to key-value-store */
 router.post('/', function(req, res, next) {
-    req.body.forEach((postEntry) => {
-        const entryIndex = keyValueStore.findIndex((item) => item.key === postEntry.key);
-        if ( entryIndex > -1 ) {
-            keyValueStore[entryIndex] = { ...postEntry };
-        } else {
-            keyValueStore.push({ ...postEntry });
-        }
-        keyValueStore = [...keyValueStore];
-    })
+    console.log(req.body);
+    const entryIndex = keyValueStore.findIndex((item) => item.key === req.body.key);
+    if ( entryIndex > -1 ) {
+        keyValueStore[entryIndex] = { ...req.body, timestamp: new Date().toISOString() };
+    } else {
+        keyValueStore.push({ ...req.body, timestamp: new Date().toISOString() });
+    }
+    keyValueStore = [...keyValueStore];
+
+    res.send()
 })
 
 module.exports = router;
