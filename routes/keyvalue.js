@@ -21,7 +21,7 @@ router.get('/', function(req, res, next) {
 
 /* POST new values to key-value-store */
 router.post('/', function(req, res, next) {
-    console.log(req.body);
+    console.log("Posting: ", req.body);
     const entryIndex = keyValueStore.findIndex((item) => item.key === req.body.key);
     if ( entryIndex > -1 ) {
         keyValueStore[entryIndex] = { ...req.body, timestamp: new Date().toISOString() };
