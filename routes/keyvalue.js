@@ -10,11 +10,22 @@ const responseBody = (responseValues) => ({ d: { results: responseValues}})
 router.get('/', function(req, res, next) {
     console.log(req.query);
     if (Object.keys(req.query).length > 0) {
-        let output = [ ...keyValueStore.filter((entry) => entry.key === req.query.filter)];
-        console.log(responseBody(output));
+        const reqKeyString = req.query['$filter']
+        const qInit = "key eq '";
+        const qTerminator = "'";
+        const indexStart = reqKeyString.indexOf(qInit) + qInit.length;
+        if (indexStart < qInit.length) {
+            console.log("Value not found: ", reqKeyString);
+            res.send(responseBody([]))
+            return
+        }
+        const indexEnd = reqKeyString.lastIndexOf(qTerminator);
+        const filter = reqKeyString.substring(indexStart, indexEnd);
+        let output = [ ...keyValueStore.filter((entry) => entry.key === filter)];
+        console.log("Found key: ", filter, responseBody(output));
         res.send(responseBody(output));
     } else {
-        console.log(responseBody(keyValueStore));
+        console.log("Full Store Content: ", responseBody(keyValueStore));
         res.send(responseBody(keyValueStore));
     }
 });
