@@ -3,13 +3,16 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "sandbox": "npx tsc --lib es2023,dom tester.ts && node tester.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.1.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "@types/node": "^22.15.29",
+    "nodemon": "^3.1.9",
+    "typescript": "^5.8.3"
   }
 }
