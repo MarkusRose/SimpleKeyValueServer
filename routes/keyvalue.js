@@ -3,11 +3,11 @@ var router = express.Router();
 
 let keyValueStore = []
 
-const responseBody = (responseValues) => ({ d: { results: responseValues}})
+const responseBody = (responseValues) => ({d: {results: responseValues}})
 
 
 /* GET full key value store */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
     if (Object.keys(req.query).length > 0) {
         const reqKeyString = req.query['$filter']
         const qInit = "key eq '";
@@ -20,22 +20,39 @@ router.get('/', function(req, res, next) {
         }
         const indexEnd = reqKeyString.lastIndexOf(qTerminator);
         const filter = reqKeyString.substring(indexStart, indexEnd);
-        let output = [ ...keyValueStore.filter((entry) => entry.key === filter).map(entry => ({ ...entry, value: Buffer.from(entry.value).toString('base64')}))];
+        let output = [...keyValueStore.filter((entry) => entry.key === filter).map(entry => ({
+            ...entry,
+            value: Buffer.from(entry.value).toString('base64')
+        }))];
         res.send(responseBody(output));
     } else {
-        res.send(responseBody(keyValueStore.map(entry => ({ ...entry, value: Buffer.from(entry.value).toString('base64')}))));
+        res.send(responseBody(keyValueStore.map(entry => ({
+            ...entry,
+            value: Buffer.from(entry.value).toString('base64')
+        }))));
     }
 });
 
-router.get('/plain', (req, res, next) => res.send(responseBody(keyValueStore.map(entry => ({ ...entry, value: JSON.parse(entry.value)})))));
+router.get('/plain', (req, res, next) => res.send(responseBody(keyValueStore.map(entry => ({
+    ...entry,
+    value: JSON.parse(entry.value)
+})))));
 
 /* POST new values to key-value-store */
-router.post('/', function(req, res, next) {
+router.post('/', function (req, res, next) {
     const entryIndex = keyValueStore.findIndex((item) => item.key === req.body.key);
-    if ( entryIndex > -1 ) {
-        keyValueStore[entryIndex] = { ...req.body, timestamp: new Date().toISOString(), value: Buffer.from(req.body.value, 'base64').toString() };
+    if (entryIndex > -1) {
+        keyValueStore[entryIndex] = {
+            ...req.body,
+            timestamp: new Date().toISOString(),
+            value: Buffer.from(req.body.value, 'base64').toString()
+        };
     } else {
-        keyValueStore.push({ ...req.body, timestamp: new Date().toISOString(), value: Buffer.from(req.body.value, 'base64').toString() });
+        keyValueStore.push({
+            ...req.body,
+            timestamp: new Date().toISOString(),
+            value: Buffer.from(req.body.value, 'base64').toString()
+        });
     }
     keyValueStore = [...keyValueStore];
 
