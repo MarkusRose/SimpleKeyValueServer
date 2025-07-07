@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon app.js --experimental-sqlite"
+    "start": "nodemon app.js",
+    "sandbox": "npx tsc --lib es2023,dom tester.ts && node tester.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -11,6 +12,8 @@
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "@types/node": "^22.15.29",
+    "nodemon": "^3.1.9",
+    "typescript": "^5.8.3"
   }
 }

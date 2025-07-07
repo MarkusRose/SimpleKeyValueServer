@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 const {Database} = require('sqlite3').verbose();
 
-const database = new Database('pace-cache.db');
+const database = new Database('kv.db');
 database.run(`
     CREATE TABLE IF NOT EXISTS kv
     (
@@ -16,7 +16,6 @@ const responseBody = (responseValues) => ({d: {results: responseValues}})
 
 /* GET full key value store */
 router.get('/mock-kv-store', function (req, res, next) {
-    console.log(req.query);
     if (Object.keys(req.query).length > 0) {
         const reqKeyString = req.query['$filter']
         const qInit = "key eq '";
@@ -31,11 +30,8 @@ router.get('/mock-kv-store', function (req, res, next) {
         const key = reqKeyString.substring(indexStart, indexEnd);
         const query = database.prepare('SELECT * FROM kv WHERE key = ?');
         query.get(key, (err, row) => {
-
             if (err) res.status(500).send(new Error(err));
-
-            if (row) {
-                console.log('row', row)
+            else if (row) {
                 res.send(responseBody([{
                     key: row.key,
                     gid: row.gid,
